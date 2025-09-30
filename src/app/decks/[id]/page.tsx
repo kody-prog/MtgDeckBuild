@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import OptimizeClient from './OptimizeClient'
 
 async function getDeck(id: string) {
 	const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL ?? ''}/api/decks/${id}`, { cache: 'no-store' })
@@ -28,6 +29,9 @@ export default async function DeckPage({ params }: { params: { id: string } }) {
 			</div>
 			<div className="rounded border p-4 bg-yellow-50 text-yellow-800">
 				<strong>Prices may be stale:</strong> Using Scryfall bulk price snapshots. Live TCGplayer integration optional.
+			</div>
+			<div className="rounded border p-4">
+				<OptimizeClient deckId={deck.id} />
 			</div>
 			<Link className="text-blue-600 underline" href="/">Back</Link>
 		</div>
