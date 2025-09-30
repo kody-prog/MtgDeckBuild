@@ -120,9 +120,146 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
   Serializable: 'Serializable'
 });
 
+exports.Prisma.CardScalarFieldEnum = {
+  id: 'id',
+  oracleId: 'oracleId',
+  scryfallId: 'scryfallId',
+  name: 'name',
+  oracleText: 'oracleText',
+  typeLine: 'typeLine',
+  manaCost: 'manaCost',
+  cmc: 'cmc',
+  colorIdentity: 'colorIdentity',
+  keywords: 'keywords',
+  producedMana: 'producedMana',
+  legalCommander: 'legalCommander',
+  banned: 'banned',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.CardPrintScalarFieldEnum = {
+  id: 'id',
+  cardId: 'cardId',
+  setCode: 'setCode',
+  collectorNumber: 'collectorNumber',
+  rarity: 'rarity',
+  imageUris: 'imageUris',
+  scryfallUri: 'scryfallUri'
+};
+
+exports.Prisma.PriceScalarFieldEnum = {
+  id: 'id',
+  cardPrintId: 'cardPrintId',
+  observedAt: 'observedAt',
+  source: 'source',
+  currency: 'currency',
+  amount: 'amount'
+};
+
+exports.Prisma.DeckScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  commanderNames: 'commanderNames',
+  colorIdentity: 'colorIdentity',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.DeckCardScalarFieldEnum = {
+  deckId: 'deckId',
+  cardId: 'cardId',
+  quantity: 'quantity',
+  isCommander: 'isCommander',
+  isCompanion: 'isCompanion',
+  category: 'category'
+};
+
+exports.Prisma.TagScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  kind: 'kind',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.CardTagScalarFieldEnum = {
+  cardId: 'cardId',
+  tagId: 'tagId'
+};
+
+exports.Prisma.RuleScalarFieldEnum = {
+  id: 'id',
+  kind: 'kind',
+  name: 'name',
+  data: 'data',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.SortOrder = {
+  asc: 'asc',
+  desc: 'desc'
+};
+
+exports.Prisma.NullableJsonNullValueInput = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull
+};
+
+exports.Prisma.JsonNullValueInput = {
+  JsonNull: Prisma.JsonNull
+};
+
+exports.Prisma.QueryMode = {
+  default: 'default',
+  insensitive: 'insensitive'
+};
+
+exports.Prisma.NullsOrder = {
+  first: 'first',
+  last: 'last'
+};
+
+exports.Prisma.JsonNullValueFilter = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull,
+  AnyNull: Prisma.AnyNull
+};
+exports.PriceSource = exports.$Enums.PriceSource = {
+  scryfall_bulk: 'scryfall_bulk',
+  tcgplayer: 'tcgplayer'
+};
+
+exports.CardRole = exports.$Enums.CardRole = {
+  LAND: 'LAND',
+  RAMP: 'RAMP',
+  DRAW: 'DRAW',
+  TARGETED_DISRUPTION: 'TARGETED_DISRUPTION',
+  MASS_DISRUPTION: 'MASS_DISRUPTION',
+  PLAN: 'PLAN',
+  UNKNOWN: 'UNKNOWN'
+};
+
+exports.TagKind = exports.$Enums.TagKind = {
+  GENERIC: 'GENERIC',
+  ARCHETYPE: 'ARCHETYPE',
+  MECHANIC: 'MECHANIC'
+};
+
+exports.RuleKind = exports.$Enums.RuleKind = {
+  BRACKET: 'BRACKET',
+  BANLIST: 'BANLIST',
+  EXCLUSION: 'EXCLUSION'
+};
 
 exports.Prisma.ModelName = {
-
+  Card: 'Card',
+  CardPrint: 'CardPrint',
+  Price: 'Price',
+  Deck: 'Deck',
+  DeckCard: 'DeckCard',
+  Tag: 'Tag',
+  CardTag: 'CardTag',
+  Rule: 'Rule'
 };
 
 /**

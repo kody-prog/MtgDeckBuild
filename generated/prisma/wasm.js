@@ -92,9 +92,146 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
   Serializable: 'Serializable'
 });
 
+exports.Prisma.CardScalarFieldEnum = {
+  id: 'id',
+  oracleId: 'oracleId',
+  scryfallId: 'scryfallId',
+  name: 'name',
+  oracleText: 'oracleText',
+  typeLine: 'typeLine',
+  manaCost: 'manaCost',
+  cmc: 'cmc',
+  colorIdentity: 'colorIdentity',
+  keywords: 'keywords',
+  producedMana: 'producedMana',
+  legalCommander: 'legalCommander',
+  banned: 'banned',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.CardPrintScalarFieldEnum = {
+  id: 'id',
+  cardId: 'cardId',
+  setCode: 'setCode',
+  collectorNumber: 'collectorNumber',
+  rarity: 'rarity',
+  imageUris: 'imageUris',
+  scryfallUri: 'scryfallUri'
+};
+
+exports.Prisma.PriceScalarFieldEnum = {
+  id: 'id',
+  cardPrintId: 'cardPrintId',
+  observedAt: 'observedAt',
+  source: 'source',
+  currency: 'currency',
+  amount: 'amount'
+};
+
+exports.Prisma.DeckScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  commanderNames: 'commanderNames',
+  colorIdentity: 'colorIdentity',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.DeckCardScalarFieldEnum = {
+  deckId: 'deckId',
+  cardId: 'cardId',
+  quantity: 'quantity',
+  isCommander: 'isCommander',
+  isCompanion: 'isCompanion',
+  category: 'category'
+};
+
+exports.Prisma.TagScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  kind: 'kind',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.CardTagScalarFieldEnum = {
+  cardId: 'cardId',
+  tagId: 'tagId'
+};
+
+exports.Prisma.RuleScalarFieldEnum = {
+  id: 'id',
+  kind: 'kind',
+  name: 'name',
+  data: 'data',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.SortOrder = {
+  asc: 'asc',
+  desc: 'desc'
+};
+
+exports.Prisma.NullableJsonNullValueInput = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull
+};
+
+exports.Prisma.JsonNullValueInput = {
+  JsonNull: Prisma.JsonNull
+};
+
+exports.Prisma.QueryMode = {
+  default: 'default',
+  insensitive: 'insensitive'
+};
+
+exports.Prisma.NullsOrder = {
+  first: 'first',
+  last: 'last'
+};
+
+exports.Prisma.JsonNullValueFilter = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull,
+  AnyNull: Prisma.AnyNull
+};
+exports.PriceSource = exports.$Enums.PriceSource = {
+  scryfall_bulk: 'scryfall_bulk',
+  tcgplayer: 'tcgplayer'
+};
+
+exports.CardRole = exports.$Enums.CardRole = {
+  LAND: 'LAND',
+  RAMP: 'RAMP',
+  DRAW: 'DRAW',
+  TARGETED_DISRUPTION: 'TARGETED_DISRUPTION',
+  MASS_DISRUPTION: 'MASS_DISRUPTION',
+  PLAN: 'PLAN',
+  UNKNOWN: 'UNKNOWN'
+};
+
+exports.TagKind = exports.$Enums.TagKind = {
+  GENERIC: 'GENERIC',
+  ARCHETYPE: 'ARCHETYPE',
+  MECHANIC: 'MECHANIC'
+};
+
+exports.RuleKind = exports.$Enums.RuleKind = {
+  BRACKET: 'BRACKET',
+  BANLIST: 'BANLIST',
+  EXCLUSION: 'EXCLUSION'
+};
 
 exports.Prisma.ModelName = {
-
+  Card: 'Card',
+  CardPrint: 'CardPrint',
+  Price: 'Price',
+  Deck: 'Deck',
+  DeckCard: 'DeckCard',
+  Tag: 'Tag',
+  CardTag: 'CardTag',
+  Rule: 'Rule'
 };
 /**
  * Create the Client
@@ -135,7 +272,6 @@ const config = {
     "db"
   ],
   "activeProvider": "postgresql",
-  "postinstall": false,
   "inlineDatasources": {
     "db": {
       "url": {
@@ -144,13 +280,13 @@ const config = {
       }
     }
   },
-  "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?\n// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init\n\ngenerator client {\n  provider = \"prisma-client-js\"\n  output   = \"../generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n",
-  "inlineSchemaHash": "99605b976d14dee99c394828b1c2a62deafc51a4fda3251761a240d4cc88e515",
+  "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?\n// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init\n\ngenerator client {\n  provider = \"prisma-client-js\"\n  output   = \"../generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\n/// Core card record (Oracle-level). One row per Oracle card identity.\nmodel Card {\n  id             String   @id @default(cuid())\n  oracleId       String   @unique\n  scryfallId     String   @unique\n  name           String\n  oracleText     String?\n  typeLine       String?\n  manaCost       String?\n  cmc            Float?\n  colorIdentity  String[]\n  keywords       String[]\n  producedMana   String[]\n  legalCommander Boolean  @default(true)\n  banned         Boolean  @default(false)\n  createdAt      DateTime @default(now())\n  updatedAt      DateTime @updatedAt\n\n  prints    CardPrint[]\n  deckCards DeckCard[]\n  cardTags  CardTag[]\n\n  @@index([name])\n  @@index([oracleId])\n}\n\n/// Specific print/edition of a card (Set + collector number).\nmodel CardPrint {\n  id              String  @id @default(cuid())\n  cardId          String\n  setCode         String\n  collectorNumber String\n  rarity          String?\n  imageUris       Json?\n  scryfallUri     String?\n  prices          Price[]\n\n  card Card @relation(fields: [cardId], references: [id], onDelete: Cascade)\n\n  @@unique([setCode, collectorNumber])\n  @@index([cardId])\n}\n\n/// Price observations (by day / source / currency) for a specific print.\nmodel Price {\n  id          String      @id @default(cuid())\n  cardPrintId String\n  observedAt  DateTime    @default(now())\n  source      PriceSource\n  currency    String      @default(\"USD\")\n  amount      Decimal\n\n  cardPrint CardPrint @relation(fields: [cardPrintId], references: [id], onDelete: Cascade)\n\n  @@index([cardPrintId, observedAt])\n  @@index([source])\n}\n\nenum PriceSource {\n  scryfall_bulk\n  tcgplayer\n}\n\n/// User deck. MVP: anonymous decks; auth later.\nmodel Deck {\n  id             String   @id @default(cuid())\n  name           String\n  commanderNames String[]\n  colorIdentity  String[]\n  createdAt      DateTime @default(now())\n  updatedAt      DateTime @updatedAt\n\n  cards DeckCard[]\n}\n\n/// Deck composition entries.\nmodel DeckCard {\n  deckId      String\n  cardId      String\n  quantity    Int      @default(1)\n  isCommander Boolean  @default(false)\n  isCompanion Boolean  @default(false)\n  category    CardRole @default(UNKNOWN)\n\n  deck Deck @relation(fields: [deckId], references: [id], onDelete: Cascade)\n  card Card @relation(fields: [cardId], references: [id], onDelete: Restrict)\n\n  @@id([deckId, cardId])\n  @@index([cardId])\n}\n\nenum CardRole {\n  LAND\n  RAMP\n  DRAW\n  TARGETED_DISRUPTION\n  MASS_DISRUPTION\n  PLAN\n  UNKNOWN\n}\n\n/// Tag catalog (e.g., archetypes, mechanics)\nmodel Tag {\n  id        String    @id @default(cuid())\n  name      String    @unique\n  kind      TagKind   @default(GENERIC)\n  createdAt DateTime  @default(now())\n  cardTags  CardTag[]\n}\n\nenum TagKind {\n  GENERIC\n  ARCHETYPE\n  MECHANIC\n}\n\n/// Many-to-many between cards and tags\nmodel CardTag {\n  cardId String\n  tagId  String\n\n  card Card @relation(fields: [cardId], references: [id], onDelete: Cascade)\n  tag  Tag  @relation(fields: [tagId], references: [id], onDelete: Cascade)\n\n  @@id([cardId, tagId])\n}\n\n/// Rule entries: bracket limits, banlist, exclusions\nmodel Rule {\n  id        String   @id @default(cuid())\n  kind      RuleKind\n  name      String\n  data      Json\n  createdAt DateTime @default(now())\n}\n\nenum RuleKind {\n  BRACKET\n  BANLIST\n  EXCLUSION\n}\n",
+  "inlineSchemaHash": "69d2ad818c1055c7ae5b8e16e2f1019300a7a69625a7733f53913d9ac7ebbaf0",
   "copyEngine": true
 }
 config.dirname = '/'
 
-config.runtimeDataModel = JSON.parse("{\"models\":{},\"enums\":{},\"types\":{}}")
+config.runtimeDataModel = JSON.parse("{\"models\":{\"Card\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"oracleId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"scryfallId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"oracleText\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"typeLine\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"manaCost\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"cmc\",\"kind\":\"scalar\",\"type\":\"Float\"},{\"name\":\"colorIdentity\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"keywords\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"producedMana\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"legalCommander\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"banned\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"prints\",\"kind\":\"object\",\"type\":\"CardPrint\",\"relationName\":\"CardToCardPrint\"},{\"name\":\"deckCards\",\"kind\":\"object\",\"type\":\"DeckCard\",\"relationName\":\"CardToDeckCard\"},{\"name\":\"cardTags\",\"kind\":\"object\",\"type\":\"CardTag\",\"relationName\":\"CardToCardTag\"}],\"dbName\":null},\"CardPrint\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"cardId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"setCode\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"collectorNumber\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"rarity\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"imageUris\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"scryfallUri\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"prices\",\"kind\":\"object\",\"type\":\"Price\",\"relationName\":\"CardPrintToPrice\"},{\"name\":\"card\",\"kind\":\"object\",\"type\":\"Card\",\"relationName\":\"CardToCardPrint\"}],\"dbName\":null},\"Price\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"cardPrintId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"observedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"source\",\"kind\":\"enum\",\"type\":\"PriceSource\"},{\"name\":\"currency\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"amount\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"cardPrint\",\"kind\":\"object\",\"type\":\"CardPrint\",\"relationName\":\"CardPrintToPrice\"}],\"dbName\":null},\"Deck\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"commanderNames\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"colorIdentity\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"cards\",\"kind\":\"object\",\"type\":\"DeckCard\",\"relationName\":\"DeckToDeckCard\"}],\"dbName\":null},\"DeckCard\":{\"fields\":[{\"name\":\"deckId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"cardId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"quantity\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"isCommander\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"isCompanion\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"category\",\"kind\":\"enum\",\"type\":\"CardRole\"},{\"name\":\"deck\",\"kind\":\"object\",\"type\":\"Deck\",\"relationName\":\"DeckToDeckCard\"},{\"name\":\"card\",\"kind\":\"object\",\"type\":\"Card\",\"relationName\":\"CardToDeckCard\"}],\"dbName\":null},\"Tag\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"kind\",\"kind\":\"enum\",\"type\":\"TagKind\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"cardTags\",\"kind\":\"object\",\"type\":\"CardTag\",\"relationName\":\"CardTagToTag\"}],\"dbName\":null},\"CardTag\":{\"fields\":[{\"name\":\"cardId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"tagId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"card\",\"kind\":\"object\",\"type\":\"Card\",\"relationName\":\"CardToCardTag\"},{\"name\":\"tag\",\"kind\":\"object\",\"type\":\"Tag\",\"relationName\":\"CardTagToTag\"}],\"dbName\":null},\"Rule\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"kind\",\"kind\":\"enum\",\"type\":\"RuleKind\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"data\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null}},\"enums\":{},\"types\":{}}")
 defineDmmfProperty(exports.Prisma, config.runtimeDataModel)
 config.engineWasm = {
   getRuntime: async () => require('./query_engine_bg.js'),
