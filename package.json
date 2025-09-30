@@ -8,7 +8,9 @@
     "start": "next start",
     "lint": "eslint",
     "import:archidekt": "node scripts/import-archidekt.cjs",
-    "ingest:scryfall": "node scripts/ingest-scryfall.cjs"
+    "ingest:scryfall": "node scripts/ingest-scryfall.cjs",
+    "db:init:embeddings": "node scripts/db-init-embeddings.cjs",
+    "embeddings:compute": "node scripts/compute-embeddings.cjs 200"
   },
   "dependencies": {
     "@prisma/client": "^6.16.3",
@@ -29,7 +31,7 @@
     "eslint-config-next": "15.5.4",
     "prisma": "^6.16.3",
     "tailwindcss": "^4",
-    "typescript": "^5",
-    "ts-node": "^10.9.2"
+    "ts-node": "^10.9.2",
+    "typescript": "^5"
   }
 }
