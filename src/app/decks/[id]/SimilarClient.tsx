@@ -12,7 +12,7 @@ export default function SimilarClient({ deckCards }: Props) {
 	const [selected, setSelected] = useState<string>(deckCards[0]?.cardId || '')
 	const [k, setK] = useState<number>(10)
 	const [loading, setLoading] = useState(false)
-	const [rows, setRows] = useState<Array<{ card_id: string; similarity: number }>>([])
+	const [rows, setRows] = useState<Array<{ card_id: string; name: string; similarity: number }>>([])
 	const [error, setError] = useState<string | null>(null)
 
 	async function onFetch() {
@@ -49,14 +49,14 @@ export default function SimilarClient({ deckCards }: Props) {
 				<table className="w-full text-sm border mt-2">
 					<thead>
 						<tr className="bg-gray-50">
-							<th className="text-left p-2 border">Card ID</th>
+							<th className="text-left p-2 border">Card</th>
 							<th className="text-left p-2 border">Similarity</th>
 						</tr>
 					</thead>
 					<tbody>
 						{rows.map((r, i) => (
 							<tr key={i}>
-								<td className="p-2 border font-mono">{r.card_id}</td>
+								<td className="p-2 border">{r.name}</td>
 								<td className="p-2 border">{r.similarity.toFixed(3)}</td>
 							</tr>
 						))}

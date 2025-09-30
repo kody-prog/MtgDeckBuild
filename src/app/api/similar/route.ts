@@ -10,9 +10,10 @@ export async function GET(req: Request) {
 	await client.connect()
 	const rs = await client.query(
 		`WITH src AS (SELECT embedding FROM card_embeddings WHERE card_id = $1)
-		 SELECT c.card_id, 1 - (ce.embedding <=> s.embedding) AS similarity
+		 SELECT c.card_id, ca.name, 1 - (ce.embedding <=> s.embedding) AS similarity
 		 FROM src s
-		 JOIN card_embeddings ce c ON true
+		 JOIN card_embeddings ce ON true
+		 JOIN card ca ON ca.id = ce.card_id
 		 ORDER BY ce.embedding <-> s.embedding
 		 LIMIT $2`,
 		[cardId, k]
