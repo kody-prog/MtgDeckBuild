@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import OptimizeClient from './OptimizeClient'
+import SimilarClient from './SimilarClient'
 import { evaluateDeckAgainstBracket } from '@/lib/brackets'
 
 async function getDeck(id: string) {
@@ -22,6 +23,7 @@ export default async function DeckPage({ params }: { params: { id: string } }) {
 	const deck = await getDeck(params.id)
 	const { total, lands, ramp, draw, targeted, mass } = summarize(deck)
 	const report = evaluateDeckAgainstBracket(deck, 3)
+	const deckCards = deck.cards.map((dc: any) => ({ cardId: dc.card.id, name: dc.card.name }))
 	return (
 		<div className="p-6 space-y-4">
 			<h1 className="text-2xl font-semibold">{deck.name}</h1>
@@ -52,6 +54,9 @@ export default async function DeckPage({ params }: { params: { id: string } }) {
 			</div>
 			<div className="rounded border p-4">
 				<OptimizeClient deckId={deck.id} />
+			</div>
+			<div className="rounded border p-4">
+				<SimilarClient deckCards={deckCards} />
 			</div>
 			<Link className="text-blue-600 underline" href="/">Back</Link>
 		</div>
