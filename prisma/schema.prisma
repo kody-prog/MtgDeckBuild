@@ -13,3 +13,145 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+/// Core card record (Oracle-level). One row per Oracle card identity.
+model Card {
+  id               String   @id @default(cuid())
+  oracleId         String   @unique
+  scryfallId       String   @unique
+  name             String
+  oracleText       String?
+  typeLine         String?
+  manaCost         String?
+  cmc              Float?
+  colorIdentity    String[]
+  keywords         String[]
+  producedMana     String[]
+  legalCommander   Boolean  @default(true)
+  banned           Boolean  @default(false)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  prints           CardPrint[]
+  deckCards        DeckCard[]
+  cardTags         CardTag[]
+
+  @@index([name])
+  @@index([oracleId])
+}
+
+/// Specific print/edition of a card (Set + collector number).
+model CardPrint {
+  id               String   @id @default(cuid())
+  cardId           String
+  setCode          String
+  collectorNumber  String
+  rarity           String?
+  imageUris        Json?
+  scryfallUri      String?
+  prices           Price[]
+
+  card             Card     @relation(fields: [cardId], references: [id], onDelete: Cascade)
+
+  @@unique([setCode, collectorNumber])
+  @@index([cardId])
+}
+
+/// Price observations (by day / source / currency) for a specific print.
+model Price {
+  id           String    @id @default(cuid())
+  cardPrintId  String
+  observedAt   DateTime  @default(now())
+  source       PriceSource
+  currency     String    @default("USD")
+  amount       Decimal
+
+  cardPrint    CardPrint @relation(fields: [cardPrintId], references: [id], onDelete: Cascade)
+
+  @@index([cardPrintId, observedAt])
+  @@index([source])
+}
+
+enum PriceSource {
+  scryfall_bulk
+  tcgplayer
+}
+
+/// User deck. MVP: anonymous decks; auth later.
+model Deck {
+  id             String     @id @default(cuid())
+  name           String
+  commanderNames String[]
+  colorIdentity  String[]
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+
+  cards          DeckCard[]
+}
+
+/// Deck composition entries.
+model DeckCard {
+  deckId      String
+  cardId      String
+  quantity    Int        @default(1)
+  isCommander Boolean    @default(false)
+  isCompanion Boolean    @default(false)
+  category    CardRole   @default(UNKNOWN)
+
+  deck        Deck       @relation(fields: [deckId], references: [id], onDelete: Cascade)
+  card        Card       @relation(fields: [cardId], references: [id], onDelete: Restrict)
+
+  @@id([deckId, cardId])
+  @@index([cardId])
+}
+
+enum CardRole {
+  LAND
+  RAMP
+  DRAW
+  TARGETED_DISRUPTION
+  MASS_DISRUPTION
+  PLAN
+  UNKNOWN
+}
+
+/// Tag catalog (e.g., archetypes, mechanics)
+model Tag {
+  id        String    @id @default(cuid())
+  name      String    @unique
+  kind      TagKind   @default(GENERIC)
+  createdAt DateTime  @default(now())
+  cardTags  CardTag[]
+}
+
+enum TagKind {
+  GENERIC
+  ARCHETYPE
+  MECHANIC
+}
+
+/// Many-to-many between cards and tags
+model CardTag {
+  cardId String
+  tagId  String
+
+  card   Card @relation(fields: [cardId], references: [id], onDelete: Cascade)
+  tag    Tag  @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([cardId, tagId])
+}
+
+/// Rule entries: bracket limits, banlist, exclusions
+model Rule {
+  id        String    @id @default(cuid())
+  kind      RuleKind
+  name      String
+  data      Json
+  createdAt DateTime  @default(now())
+}
+
+enum RuleKind {
+  BRACKET
+  BANLIST
+  EXCLUSION
+}
