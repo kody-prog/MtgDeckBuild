@@ -6,10 +6,13 @@
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "import:archidekt": "node scripts/import-archidekt.cjs",
+    "ingest:scryfall": "node scripts/ingest-scryfall.cjs"
   },
   "dependencies": {
     "@prisma/client": "^6.16.3",
+    "dotenv": "^16.4.5",
     "next": "15.5.4",
     "pg": "^8.16.3",
     "pgvector": "^0.2.1",
@@ -26,6 +29,7 @@
     "eslint-config-next": "15.5.4",
     "prisma": "^6.16.3",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "ts-node": "^10.9.2"
   }
 }
